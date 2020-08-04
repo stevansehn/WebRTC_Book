@@ -7,8 +7,10 @@ var dimensions = document.querySelector("p#dimensions");
 var video = document.querySelector("video");
 var stream;
 
-navigator.getUserMedia = navigator.getUserMedia ||
-  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+navigator.getUserMedia =
+  navigator.getUserMedia ||
+  navigator.webkitGetUserMedia ||
+  navigator.mozGetUserMedia;
 
 function successCallback(gotStream) {
   window.stream = gotStream; // stream available to console
@@ -17,7 +19,7 @@ function successCallback(gotStream) {
   video.play();
 }
 
-function errorCallback(error){
+function errorCallback(error) {
   console.log("navigator.getUserMedia error: ", error);
 }
 
@@ -34,7 +36,6 @@ video.addEventListener('play', function(){
 });
 */
 
-
 /*
 video.addEventListener('play', function(){
   console.log('width: ' + video.videoWidth);
@@ -45,42 +46,55 @@ video.addEventListener('play', function(){
 });
 */
 
-
-var qvgaConstraints  = {
+var qvgaConstraints = {
+  audio: false,
   video: {
-    mandatory: {
-      maxWidth: 320,
-      maxHeight: 240
-    }
-  }
+    width: { max: 160 },
+    height: { max: 120 },
+  },
 };
 
-var vgaConstraints  = {
+var vgaConstraints = {
+  audio: false,
   video: {
-    mandatory: {
-      maxWidth: 640,
-      maxHeight: 480
-    }
-  }
+    width: { max: 320 },
+    height: { max: 240 },
+  },
 };
 
-var hdConstraints  = {
+var hdConstraints = {
+  audio: false,
   video: {
-    mandatory: {
-      minWidth: 1280,
-      minHeight: 960
-    }
-  }
+    width: { min: 640, ideal: 1280, max: 1920 },
+    height: { min: 480, ideal: 960, max: 1080 },
+  },
 };
 
-qvgaButton.onclick = function(){getMedia(qvgaConstraints)};
-vgaButton.onclick = function(){getMedia(vgaConstraints)};
-hdButton.onclick = function(){getMedia(hdConstraints)};
+qvgaButton.onclick = function () {
+  getMedia(qvgaConstraints);
+};
+vgaButton.onclick = function () {
+  getMedia(vgaConstraints);
+};
+hdButton.onclick = function () {
+  getMedia(hdConstraints);
+};
 
-function getMedia(constraints){
+function getMedia(constraints) {
   if (!!stream) {
     video.src = null;
     stream.stop();
   }
-  navigator.getUserMedia(constraints, successCallback, errorCallback);
+  // navigator.getUserMedia(constraints, successCallback, errorCallback);
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(function (mediaStream) {
+      var video = document.querySelector("video");
+      video.srcObject = mediaStream;
+      video.onloadedmetadata = function (e) {
+        video.play();
+      };
+    })
+    .catch(function (err) {
+      console.log(err.name + ": " + err.message);
+    }); // always check for errors at the end.
 }

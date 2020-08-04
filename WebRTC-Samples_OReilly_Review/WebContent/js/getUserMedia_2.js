@@ -4,9 +4,11 @@ var constraints = {audio: false, video: true};
 var video = document.querySelector("video");
 
 function successCallback(stream) {
+  console.log("success")
   window.stream = stream; // make the returned stream available to console...
   if (window.URL) {
-    video.src = window.URL.createObjectURL(stream);
+    // video.srcObject = window.URL.createObjectURL(stream);
+    video.srcObject = stream;
   } else {
     video.src = stream;
   }
