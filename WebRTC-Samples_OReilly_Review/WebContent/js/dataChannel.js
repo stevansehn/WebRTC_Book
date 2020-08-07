@@ -22,31 +22,12 @@ function log(text) {
 }
 
 function createConnection() {
-	// Chrome
-	if (navigator.webkitGetUserMedia) {
-		RTCPeerConnection = webkitRTCPeerConnection;
-		// Firefox
-	}else if(navigator.mozGetUserMedia){
-		RTCPeerConnection = mozRTCPeerConnection;
-		RTCSessionDescription = mozRTCSessionDescription;
-		RTCIceCandidate = mozRTCIceCandidate;
-	}
+
 	log("RTCPeerConnection object: " + RTCPeerConnection);
-
-	// This is an optional configuration string, associated with NAT traversal setup
-	var servers = null;
-
-	// JavaScript variable associated with proper
-	// configuration of an RTCPeerConnection object:
-	// use DTLS/SRTP
-	var pc_constraints = {
-			'optional': [
-			             {'DtlsSrtpKeyAgreement': true}
-			             ]};
 
 	// Create the local PeerConnection object...
 	// ...with data channels
-	localPeerConnection = new RTCPeerConnection(servers,pc_constraints);
+	localPeerConnection = new RTCPeerConnection();
 
 	log("Created local peer connection object localPeerConnection, with Data Channel");
 
@@ -54,8 +35,7 @@ function createConnection() {
 	try {
 		// Note Well: SCTP-based reliable Data Channels supported in Chrome 29+ !
 		// use {reliable: false} if you have an older version of Chrome
-		sendChannel = localPeerConnection.createDataChannel("sendDataChannel",
-				{reliable: true});
+		sendChannel = localPeerConnection.createDataChannel("sendDataChannel");
 		log('Created reliable send data channel');
 	} catch (e) {
 		alert('Failed to create data channel!');
@@ -69,7 +49,7 @@ function createConnection() {
 	sendChannel.onclose = handleSendChannelStateChange;
 
 	// Mimic a 'remote' peer connection
-	window.remotePeerConnection = new RTCPeerConnection(servers,pc_constraints);
+	window.remotePeerConnection = new RTCPeerConnection();
 	log('Created remote peer connection object remotePeerConnection, with Data Channel');
 
 	//Associate handlers with peer connection ICE events...

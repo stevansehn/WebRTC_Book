@@ -4,21 +4,23 @@ var hdButton = document.querySelector("button#hd");
 
 var dimensions = document.querySelector("p#dimensions");
 
+// Video element in the HTML5 page
 var video = document.querySelector("video");
+// The local MediaStream to play with
 var stream;
 
-navigator.getUserMedia =
-  navigator.getUserMedia ||
-  navigator.webkitGetUserMedia ||
-  navigator.mozGetUserMedia;
-
+// Callback to be called in case of success...
 function successCallback(gotStream) {
-  window.stream = gotStream; // stream available to console
-  video.src = window.URL.createObjectURL(stream);
-  //video.src = stream;
+  // Make the stream available to the console for introspection
+  window.stream = gotStream;
+  // Attach the returned stream to the <video> element
+  // in the HTML page
+  video.srcObject = stream;
+  // Start playing video
   video.play();
 }
 
+// Callback to be called in case of failure...
 function errorCallback(error) {
   console.log("navigator.getUserMedia error: ", error);
 }
@@ -46,28 +48,32 @@ video.addEventListener('play', function(){
 });
 */
 
+// Constraints object for low resolution video
 var qvgaConstraints = {
-  audio: false,
   video: {
-    width: { max: 160 },
-    height: { max: 120 },
-  },
+    mandatory: {
+      maxWidth: 160,
+      maxHeight: 120
+    }
+  }
 };
-
+// Constraints object for standard resolution video
 var vgaConstraints = {
-  audio: false,
   video: {
-    width: { max: 320 },
-    height: { max: 240 },
-  },
+    mandatory: {
+      maxWidth: 320,
+      maxHeight: 240
+    }
+  }
 };
-
+// Constraints object for high resolution video
 var hdConstraints = {
-  audio: false,
   video: {
-    width: { min: 640, ideal: 1280, max: 1920 },
-    height: { min: 480, ideal: 960, max: 1080 },
-  },
+    mandatory: {
+      minWidth: 640,
+      minHeight: 480
+    }
+  }
 };
 
 qvgaButton.onclick = function () {
@@ -80,21 +86,15 @@ hdButton.onclick = function () {
   getMedia(hdConstraints);
 };
 
+// Simple wrapper for getUserMedia() with constraints object as
+// an input parameter
 function getMedia(constraints) {
   if (!!stream) {
     video.src = null;
-    stream.stop();
+    // stream.stop();
   }
-  // navigator.getUserMedia(constraints, successCallback, errorCallback);
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function (mediaStream) {
-      var video = document.querySelector("video");
-      video.srcObject = mediaStream;
-      video.onloadedmetadata = function (e) {
-        video.play();
-      };
-    })
-    .catch(function (err) {
-      console.log(err.name + ": " + err.message);
-    }); // always check for errors at the end.
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(successCallback)
+    .catch(errorCallback);
 }
