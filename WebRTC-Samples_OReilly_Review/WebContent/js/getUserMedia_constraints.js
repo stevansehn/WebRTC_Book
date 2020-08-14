@@ -44,19 +44,13 @@ video.addEventListener('play', function(){
   console.log('height: ' + video.videoHeight);
   
   alert('Video dimensions set to: ' + video.videoWidth +
-		    "x" + video.videoHeight + 'px.' );
-});
-*/
-
-// Constraints object for low resolution video
-var qvgaConstraints = {
-  video: {
-    mandatory: {
-      maxWidth: 160,
+		    "x" + video.videoHeight + 'px.' );video
       maxHeight: 120
     }
   }
 };
+*/
+
 // Constraints object for standard resolution video
 var vgaConstraints = {
   video: {

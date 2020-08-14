@@ -32,11 +32,7 @@ function successCallback(stream) {
   log("Received local stream");
 
   // Associate the local video element with the retrieved stream
-  if (window.URL) {
-    localVideo.srcObject = stream;
-  } else {
-    localVideo.srcObject = stream;
-  }
+  localVideo.srcObject = stream;
 
   localStream = stream;
 
