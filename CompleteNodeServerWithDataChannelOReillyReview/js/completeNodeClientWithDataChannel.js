@@ -124,7 +124,6 @@ socket.on("log", function (array) {
 socket.on("message", function (message) {
   console.log("Received message:", message);
   if (message === "got user media") {
-    console.log("checkAndStart() in socket.on() evoked");
     checkAndStart();
   } else if (message.type === "offer") {
     if (!isInitiator && !isStarted) {
@@ -159,7 +158,6 @@ function sendMessage(message) {
 // Channel negotiation trigger function
 function checkAndStart() {
   if (!isStarted && typeof localStream != "undefined" && isChannelReady) {
-    console.log("if (!isStarted && typeof localStream != undefined && isChannelReady) OK")
     createPeerConnection();
     pc.addStream(localStream);
     isStarted = true;
@@ -173,7 +171,6 @@ function checkAndStart() {
 /////////////////////////////////////////////////////////
 // Peer Connection management...
 function createPeerConnection() {
-  console.log('function createPeerConnection() evoked')
   try {
     pc = new RTCPeerConnection();
     pc.onicecandidate = handleIceCandidate;
@@ -227,7 +224,6 @@ function handleMessage(event) {
 }
 
 function handleSendChannelStateChange() {
-  console.log("function handleSendChannelStateChange() evoked")
   var readyState = sendChannel.readyState;
   trace("Send channel state is: " + readyState);
   // If channel ready, enable user's input
